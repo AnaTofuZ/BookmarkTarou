@@ -19,7 +19,7 @@ jobs:
           github_token: ${{ secrets.github_token }}
           # Can pass --config flag to change golangci-lint behavior and target
           # directory.
-          golangci_lint_flags: "--config=.github/.golangci.yml ./testdata"
+          golangci_lint_flags: "--config=.github/.golangci.yml --enable-all ./"
 
   # Use golint via golangci-lint binary with "warning" level.
   golint:
