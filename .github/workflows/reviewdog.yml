@@ -1,15 +1,15 @@
 name: reviewdog
 on: [pull_request]
 jobs:
-    golangci-lint:
-    name: runner / golangci-lint (pre-build docker image)
+  golangci-lint:
+    name: runner / golangci-lint
     runs-on: ubuntu-latest
     steps:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v1
       - name: golangci-lint
-        # uses: reviewdog/action-golangci-lint@v1 # Build with Dockerfile
-        uses: docker://reviewdog/action-golangci-lint:v1 # Pre-built image
+        uses: reviewdog/action-golangci-lint@v1 # Build with Dockerfile
         with:
           github_token: ${{ secrets.github_token }}
-          golangci_lint_flags: "--config=.github/.golangci.yml ./"
+          # Can pass --config flag to change golangci-lint behavior.
+          golangci_lint_flags: "--config=.github/.golangci.yml"
