@@ -1,0 +1,23 @@
+runner:
+  golint:
+    cmd: golint $(go list ./...)
+    format: golint
+  govet:
+    cmd: go vet $(go list ./...)
+    format: govet
+  errcheck:
+    cmd: errcheck -asserts -ignoretests -blank ./...
+    errorformat:
+      - "%f:%l:%c:%m"
+  wraperr:
+    cmd: wraperr ./...
+    errorformat:
+      - "%f:%l:%c:%m"
+  megacheck:
+    cmd: megacheck ./...
+    errorformat:
+      - "%f:%l:%c:%m"
+  unparam:
+    cmd: unparam ./...
+    errorformat:
+      - "%f:%l:%c: %m"
