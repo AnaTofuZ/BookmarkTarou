@@ -1,0 +1,26 @@
+version: "3.6"
+services:
+  app:
+    build: .
+    image: bookmark_tarou
+    volumes:
+      - .:/src
+    links:
+      - db
+    ports:
+      - "8000:8000"
+    environment:
+      PORT: 8000
+      DATABASE_DSN: root@(db:3306)/bookmark_tarou
+      DATABASE_DSN_TEST: root@(db:3306)/bookmark_tarou_test
+    tty: true
+    stdin_open: true
+  db:
+    image: mysql:8.0
+    volumes:
+      - ./db/docker:/docker-entrypoint-initdb.d
+      - .:/app
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1
