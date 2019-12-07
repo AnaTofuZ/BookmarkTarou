@@ -33,6 +33,9 @@ CREATE TABLE bookmarks (
     `entry_id` BIGINT UNSIGNED NOT NULL,
     `comment` VARCHAR(256) NOT NULL,
 
+    `created_at` DATETIME(6) NOT NULL,
+    `updated_at` DATETIME(6) NOT NULL,
+
     FOREIGN KEY (user_id)
       REFERENCES users(id),
 
@@ -47,6 +50,10 @@ CREATE TABLE bookmarks (
 CREATE TABLE tags (
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     `content` VARCHAR(256) NOT NULL,
+
+    `created_at` DATETIME(6) NOT NULL,
+    `updated_at` DATETIME(6) NOT NULL,
+
     PRIMARY KEY(id),
     UNIQUE KEY(content)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -62,6 +69,9 @@ CREATE TABLE bookmark_tag_relations (
 
     FOREIGN KEY (tag_id)
       REFERENCES tags(id),
+
+    `created_at` DATETIME(6) NOT NULL,
+    `updated_at` DATETIME(6) NOT NULL,
 
     PRIMARY KEY(id),
     UNIQUE KEY(bookmark_id, tag_id)
