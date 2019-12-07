@@ -1,4 +1,4 @@
-CREATE TABLE user (
+CREATE TABLE users (
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     `name` VARBINARY(32) NOT NULL,
     `password`  VARBINARY(255) NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE user (
     KEY(updated_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE entry (
+CREATE TABLE entries (
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 
     `url`  VARBINARY(2083) NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE entry (
     UNIQUE KEY (url(191))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE bookmark (
+CREATE TABLE bookmarks (
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 
     `user_id` BIGINT UNSIGNED NOT NULL,
@@ -34,34 +34,34 @@ CREATE TABLE bookmark (
     `comment` VARCHAR(256) NOT NULL,
 
     FOREIGN KEY (user_id)
-      REFERENCES user(id),
+      REFERENCES users(id),
 
     FOREIGN KEY (entry_id)
-      REFERENCES entry(id),
+      REFERENCES entries(id),
 
     PRIMARY KEY(id),
     UNIQUE KEY(user_id, entry_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
-CREATE TABLE tag (
+CREATE TABLE tags (
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     `content` VARCHAR(256) NOT NULL,
     PRIMARY KEY(id),
     UNIQUE KEY(content)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE bookmark_tag_relation (
+CREATE TABLE bookmark_tag_relations (
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 
     `bookmark_id` BIGINT UNSIGNED NOT NULL,
     `tag_id` BIGINT UNSIGNED NOT NULL,
 
     FOREIGN KEY (bookmark_id)
-      REFERENCES bookmark(id),
+      REFERENCES bookmarks(id),
 
     FOREIGN KEY (tag_id)
-      REFERENCES tag(id),
+      REFERENCES tags(id),
 
     PRIMARY KEY(id),
     UNIQUE KEY(bookmark_id, tag_id)
