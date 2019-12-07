@@ -63,5 +63,6 @@ CREATE TABLE bookmark_tag_relation (
     FOREIGN KEY (tag_id)
       REFERENCES tag(id),
 
-    PRIMARY KEY(id)
+    PRIMARY KEY(id),
+    UNIQUE KEY(bookmark_id, tag_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
