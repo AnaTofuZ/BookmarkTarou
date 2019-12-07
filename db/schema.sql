@@ -44,3 +44,24 @@ CREATE TABLE bookmark (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
+CREATE TABLE tag (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `content` VARCHAR(256) NOT NULL,
+    PRIMARY KEY(id),
+    UNIQUE KEY(content)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE bookmark_tag_relation (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+
+    `bookmark_id` BIGINT UNSIGNED NOT NULL,
+    `tag_id` BIGINT UNSIGNED NOT NULL,
+
+    FOREIGN KEY (bookmark_id)
+      REFERENCES bookmark(id),
+
+    FOREIGN KEY (tag_id)
+      REFERENCES tag(id),
+
+    PRIMARY KEY(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
