@@ -23,11 +23,11 @@ func (u userStoreImpl) GetUserFromID(ctx context.Context, uid uint64) (*model.Us
 	panic("implement me")
 }
 
-func (u userStoreImpl) CreateUser(ctx context.Context, name string, password string) (*model.User, error) {
+func (u userStoreImpl) CreateUser(ctx context.Context, name, password string) (*model.User, error) {
 	panic("implement me")
 }
 
-func (u userStoreImpl) UpdateUser(ctx context.Context, uid uint64, name string, password string) (*model.User, error) {
+func (u userStoreImpl) UpdateUser(ctx context.Context, uid uint64, name, password string) (*model.User, error) {
 	panic("implement me")
 }
 
