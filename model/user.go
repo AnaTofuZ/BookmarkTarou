@@ -6,5 +6,5 @@ type User struct {
 	Name string `db:"name"`
 }
 
-//Users Userの集合(テーブル名と対応)
+// Users Userの集合(テーブル名と対応)
 type Users []User
