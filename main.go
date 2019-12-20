@@ -1,7 +1,21 @@
 package main
 
-import "fmt"
+import (
+	"log"
+	"os"
+
+	"github.com/anatofuz/BookmarkTarou/app"
+)
 
 func main() {
-	fmt.Println("vim-go")
+	os.Exit(run())
+}
+
+func run() int {
+	err := app.Run()
+	if err != nil {
+		log.Fatal(err)
+		return 1
+	}
+	return 0
 }
