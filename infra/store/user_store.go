@@ -6,7 +6,7 @@ import (
 	"github.com/anatofuz/BookmarkTarou/model"
 )
 
-//UserStore Userに関するDBアクセスのInterface
+// UserStore Userに関するDBアクセスのInterface
 type UserStore interface {
 	GetUsers(ctx context.Context) (*model.Users, error)
 	GetUserFromID(ctx context.Context, uid uint64) (*model.User, error)
