@@ -37,10 +37,10 @@ func (u *userStoreImpl) GetUserFromID(ctx context.Context, uid uint64) (*model.U
 	}, nil
 }
 
-func (u *userStoreImpl) CreateUser(ctx context.Context, name, password string) (*model.User, error) {
+func (u *userStoreImpl) CreateUser(ctx context.Context, name string, password []byte) (*model.User, error) {
 	recordUser := &record.User{
 		Name:     *(*[]byte)(unsafe.Pointer(&name)),
-		Password: *(*[]byte)(unsafe.Pointer(&password)),
+		Password: password,
 	}
 	tx, err := u.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -64,7 +64,7 @@ func (u *userStoreImpl) CreateUser(ctx context.Context, name, password string) (
 	}, nil
 }
 
-func (u *userStoreImpl) UpdateUser(ctx context.Context, uid uint64, name string, password string) (*model.User, error) {
+func (u *userStoreImpl) UpdateUser(ctx context.Context, uid uint64, name string, password []byte) (*model.User, error) {
 	tx, err := u.db.BeginTx(ctx, nil)
 	usr, err := record.FindUser(ctx, tx, uid)
 	if err != nil {
@@ -75,7 +75,7 @@ func (u *userStoreImpl) UpdateUser(ctx context.Context, uid uint64, name string,
 	}
 
 	usr.Name = []byte(name)
-	usr.Password = []byte(password)
+	usr.Password = password
 	_, err = usr.Update(ctx, tx, boil.Infer())
 	if err != nil {
 		tx.Rollback()

@@ -5,18 +5,18 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type WebHandler interface {
+type Handler interface {
 	Perform(e *echo.Echo, usrSote store.UserStore)
 }
 
-type WebHandlerImpl struct {
+type HandlerImpl struct {
 }
 
-func CreateWebHandlerImpl() WebHandler {
-	return &WebHandlerImpl{}
+func CreateHandlerImpl() Handler {
+	return &HandlerImpl{}
 }
 
 // Perform ルーティングしつつビジネスロジックを呼び出す
-func (w *WebHandlerImpl) Perform(e *echo.Echo, usrStore store.UserStore) {
+func (w *HandlerImpl) Perform(e *echo.Echo, usrStore store.UserStore) {
 	newUserHandler(e, usrStore)
 }
