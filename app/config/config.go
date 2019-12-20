@@ -1,13 +1,15 @@
 package config
 
 import (
+	"database/sql"
 	"fmt"
-	"github.com/anatofuz/BookmarkTarou/infra/store/mysql"
-	"github.com/jmoiron/sqlx"
 	"os"
 	"strconv"
 
+	"github.com/anatofuz/BookmarkTarou/infra/store/mysql"
+
 	"github.com/anatofuz/BookmarkTarou/infra/store"
+	_ "github.com/go-sql-driver/mysql"
 	"golang.org/x/xerrors"
 )
 
@@ -17,15 +19,15 @@ type AppComponent interface {
 }
 
 type appComponentImpl struct {
-	bookmarkDB *sqlx.DB
+	bookmarkDB *sql.DB
 }
 
-type Config struct {
+type config struct {
 	port int
 	dsn  string
 }
 
-func CreateDiConfig() (*Config, error) {
+func createDiConfig() (*config, error) {
 	dsn, ok := os.LookupEnv("DATABASE_DSN")
 	if !ok {
 		return nil, fmt.Errorf("failed set DATABASE_DSN")
@@ -42,15 +44,19 @@ func CreateDiConfig() (*Config, error) {
 		return nil, xerrors.Errorf("failed convert integer at port : %w", err)
 	}
 
-	return &Config{
+	return &config{
 		port: port,
 		dsn:  dsn,
 	}, nil
 }
 
 // CreateAppComponent DIcontainerのコンストラクタ
-func CreateAppComponent(config *Config) (AppComponent, error) {
-	db, err := sqlx.Open("mysql", config.dsn)
+func CreateAppComponent() (AppComponent, error) {
+	config, err := createDiConfig()
+	if err != nil {
+		return nil, fmt.Errorf("failed create DiConfig : %w", err)
+	}
+	db, err := sql.Open("mysql", config.dsn)
 	if err != nil {
 		return nil, xerrors.Errorf("failed open sqlx : %w", err)
 	}
