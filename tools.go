@@ -7,9 +7,13 @@ package tools
 // tool dependencies
 import (
 	_ "github.com/izumin5210/gex/cmd/gex"
+	_ "github.com/volatiletech/sqlboiler"
+	_ "github.com/volatiletech/sqlboiler/drivers/sqlboiler-mysql"
 )
 
 // If you want to use tools, please run the following command:
 //  go generate ./tools.go
 //
 //go:generate go build -v -o=./bin/gex github.com/izumin5210/gex/cmd/gex
+//go:generate go build -v -o=./bin/sqlboiler github.com/volatiletech/sqlboiler
+//go:generate go build -v -o=./bin/sqlboiler-mysql github.com/volatiletech/sqlboiler/drivers/sqlboiler-mysql
