@@ -1,2 +1,1 @@
-go mod download
-ls
+go run main.go
