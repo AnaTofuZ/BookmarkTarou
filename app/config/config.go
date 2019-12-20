@@ -7,8 +7,8 @@ import (
 	"os"
 	"strconv"
 
-	"golang.org/x/xerrors"
 	"github.com/anatofuz/BookmarkTarou/infra/store"
+	"golang.org/x/xerrors"
 )
 
 // AppComponent is a DI container of Bookmark app.
@@ -39,12 +39,12 @@ func CreateDiConfig() (*Config, error) {
 
 	port, err := strconv.Atoi(portStr)
 	if err != nil {
-		return nil, xerrors.Errorf("failed convert integer at port : %w",err)
-	}	
+		return nil, xerrors.Errorf("failed convert integer at port : %w", err)
+	}
 
 	return &Config{
 		port: port,
-		dsn: dsn,
+		dsn:  dsn,
 	}, nil
 }
 
@@ -52,10 +52,10 @@ func CreateDiConfig() (*Config, error) {
 func CreateAppComponent(config *Config) (AppComponent, error) {
 	db, err := sqlx.Open("mysql", config.dsn)
 	if err != nil {
-		return nil, xerrors.Errorf("failed open sqlx : %w",err)
+		return nil, xerrors.Errorf("failed open sqlx : %w", err)
 	}
 
-	return &appComponentImpl{bookmarkDB:db}, nil
+	return &appComponentImpl{bookmarkDB: db}, nil
 }
 
 func (app *appComponentImpl) UserStore() store.UserStore {
