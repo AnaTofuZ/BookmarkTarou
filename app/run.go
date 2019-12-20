@@ -15,7 +15,7 @@ func Run() error {
 	}
 	fmt.Println(app.UserStore())
 	e := echo.New()
-	web.TopRender(e)
-	e.Start(":8000")
-	return nil
+	webHandler := web.CreateWebHandlerImpl()
+	webHandler.Perform(e, app.UserStore())
+	return e.Start(":8000")
 }
