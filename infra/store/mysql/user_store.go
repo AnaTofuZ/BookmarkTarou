@@ -22,7 +22,7 @@ func NewUserStore(db *sql.DB) store.UserStore {
 	return &userStoreImpl{db: db}
 }
 
-func (u userStoreImpl) GetUserFromID(ctx context.Context, uid uint64) (*model.User, error) {
+func (u *userStoreImpl) GetUserFromID(ctx context.Context, uid uint64) (*model.User, error) {
 	user, err := record.FindUser(ctx, u.db, uid)
 	if err != nil {
 		if !errors.Is(sql.ErrNoRows, err) {
@@ -37,7 +37,7 @@ func (u userStoreImpl) GetUserFromID(ctx context.Context, uid uint64) (*model.Us
 	}, nil
 }
 
-func (u userStoreImpl) CreateUser(ctx context.Context, name, password string) (*model.User, error) {
+func (u *userStoreImpl) CreateUser(ctx context.Context, name, password string) (*model.User, error) {
 	recordUser := &record.User{
 		Name:     *(*[]byte)(unsafe.Pointer(&name)),
 		Password: *(*[]byte)(unsafe.Pointer(&password)),
@@ -64,7 +64,7 @@ func (u userStoreImpl) CreateUser(ctx context.Context, name, password string) (*
 	}, nil
 }
 
-func (u userStoreImpl) UpdateUser(ctx context.Context, uid uint64, name string, password string) (*model.User, error) {
+func (u *userStoreImpl) UpdateUser(ctx context.Context, uid uint64, name string, password string) (*model.User, error) {
 	tx, err := u.db.BeginTx(ctx, nil)
 	usr, err := record.FindUser(ctx, tx, uid)
 	if err != nil {
