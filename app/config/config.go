@@ -3,6 +3,8 @@ package config
 import (
 	"database/sql"
 	"fmt"
+	"github.com/anatofuz/BookmarkTarou/infra/store/kvs"
+	"github.com/go-redis/redis"
 	"os"
 	"strconv"
 
@@ -16,11 +18,14 @@ import (
 // AppComponent is a DI container of Bookmark app.
 type AppComponent interface {
 	UserStore() store.UserStore
+	UserSessionStore() store.UserSessionStore
 }
 
 type appComponentImpl struct {
 	bookmarkDB *sql.DB
+	userSessionRedis *redis.Client
 }
+
 
 type config struct {
 	port int
@@ -66,9 +71,29 @@ func CreateAppComponent() (AppComponent, error) {
 		return nil, err
 	}
 
-	return &appComponentImpl{bookmarkDB: db}, nil
+	redisAddr,ok := os.LookupEnv("REDIS_ADDR")
+	if !ok {
+		return nil, xerrors.Errorf("failed set REDIS_ADDR")
+	}
+	client := redis.NewClient(&redis.Options{
+		Addr:              redisAddr,
+	})
+
+	err = client.Ping().Err()
+	if err != nil {
+		return nil, err
+	}
+
+	return &appComponentImpl{
+		bookmarkDB: db,
+		userSessionRedis:client,
+	}, nil
 }
 
 func (app *appComponentImpl) UserStore() store.UserStore {
 	return tarouSQL.NewUserStore(app.bookmarkDB)
+}
+
+func (app *appComponentImpl) UserSessionStore() store.UserSessionStore {
+	return kvs.NewRedisStore(app.userSessionRedis)
 }

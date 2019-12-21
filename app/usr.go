@@ -13,6 +13,7 @@ import (
 type UserApp interface {
 	Create(ctx context.Context, name, password string) (*model.User, error)
 	SignUp(ctx context.Context, name, password string) (*model.User, error)
+	SignIn(ctx context.Context, name, password string) (*model.User, error)
 }
 
 type UserAppImpl struct {
@@ -66,4 +67,26 @@ func (u *UserAppImpl) SignUp(ctx context.Context, name, password string) (*model
 		ID:   usrWP.ID,
 		Name:usrWP.Name,
 	}, nil
+}
+
+func (u *UserAppImpl) SignIn(ctx context.Context, name, password string) (*model.User, error) {
+	if name == "" {
+		return nil, errors.New("empty user name")
+	}
+	if password == "" {
+		return nil, errors.New("empty user password")
+	}
+	hashedPass, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, fmt.Errorf("failed CreateUser: %w", err)
+	}
+	usrWP, err := u.userStore.GetPasswordWithUserFromName(ctx,name)
+
+	if err := bcrypt.CompareHashAndPassword(hashedPass,usrWP.Pw); err != nil {
+		if err == bcrypt.ErrMismatchedHashAndPassword {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("failed login: %w",err)
+	}
+	return &usrWP.User,nil
 }
