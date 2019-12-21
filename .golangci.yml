@@ -95,8 +95,8 @@ linters:
   # - maligned
 
 run:
-  #skip-dirs:
-  #  - test/testdata_etc
+  skip-dirs:
+    - infra/record
   #skip-files:
   #  - internal/cache/.*_test.go
 
