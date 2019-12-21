@@ -8,6 +8,12 @@ type User struct {
 	Name string
 }
 
+// UserWithPW パスワード付きのモデル
+type UserWithPW struct {
+	User
+	Pw []byte
+}
+
 // Users Userの集合(テーブル名と対応)
 type Users []User
 

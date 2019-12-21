@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/volatiletech/sqlboiler/queries/qm"
 	"unsafe"
 
 	"github.com/anatofuz/BookmarkTarou/infra/record"
@@ -61,6 +62,16 @@ func (u *userStoreImpl) CreateUser(ctx context.Context, name string, password []
 	return &model.User{
 		ID:   recordUser.ID,
 		Name: string(recordUser.Name),
+	}, nil
+}
+func (u *userStoreImpl) GetPasswordWithUserFromName(ctx context.Context, name string) (*model.UserWithPW, error) {
+	user, err := record.Users(qm.Where("name=?", name)).One(ctx, u.db)
+	if err != nil {
+		return nil, fmt.Errorf("failed GetPasswordFromName: %w", err)
+	}
+	return &model.UserWithPW{
+		User: model.User{ID: user.ID, Name: string(user.Name)},
+		Pw:   user.Password,
 	}, nil
 }
 
