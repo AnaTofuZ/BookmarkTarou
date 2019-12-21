@@ -1,0 +1,15 @@
+{{define "title"}} ブックマーク市太郎 {{end}}
+<a href="/"> 戻りたい!! </a> <br>
+
+{{define "body"}}
+    <h1> {{ .Entry.Title}} にまつわるブックマーク</h1>
+
+    <div id="bookmarkEntry" >
+        <a fref="{{.Entry.URL}}">{{.Entry.Title}}</a>
+    </div>
+    {{if .BwU}}
+        {{range .BwU}}
+            <p> 名前: {{.User.Name}} Comment: {{ .Bookmark.Comment}}</p>
+        {{end}}
+    {{end}}
+{{end}}

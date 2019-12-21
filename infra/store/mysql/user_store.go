@@ -63,7 +63,7 @@ func (u *userStoreImpl) CreateUser(ctx context.Context, name string, password []
 	}, nil
 }
 func (u *userStoreImpl) GetPasswordWithUserFromName(ctx context.Context, name string) (*model.UserWithPW, error) {
-	user, err := record.Users(qm.Where("name=?", name)).One(ctx, u.db)
+	user, err := record.Users(qm.Where("name = ?", name)).One(ctx, u.db)
 	if err != nil {
 		return nil, fmt.Errorf("failed GetPasswordFromName: %w", err)
 	}

@@ -19,13 +19,14 @@ import (
 type AppComponent interface {
 	UserStore() store.UserStore
 	UserSessionStore() store.UserSessionStore
+	BookmarkStore() store.BookmarkStore
+	EntryStore() store.EntryStore
 }
 
 type appComponentImpl struct {
-	bookmarkDB *sql.DB
+	bookmarkDB       *sql.DB
 	userSessionRedis *redis.Client
 }
-
 
 type config struct {
 	port int
@@ -71,12 +72,12 @@ func CreateAppComponent() (AppComponent, error) {
 		return nil, err
 	}
 
-	redisAddr,ok := os.LookupEnv("REDIS_ADDR")
+	redisAddr, ok := os.LookupEnv("REDIS_ADDR")
 	if !ok {
 		return nil, xerrors.Errorf("failed set REDIS_ADDR")
 	}
 	client := redis.NewClient(&redis.Options{
-		Addr:              redisAddr,
+		Addr: redisAddr,
 	})
 
 	err = client.Ping().Err()
@@ -85,8 +86,8 @@ func CreateAppComponent() (AppComponent, error) {
 	}
 
 	return &appComponentImpl{
-		bookmarkDB: db,
-		userSessionRedis:client,
+		bookmarkDB:       db,
+		userSessionRedis: client,
 	}, nil
 }
 
@@ -96,4 +97,12 @@ func (app *appComponentImpl) UserStore() store.UserStore {
 
 func (app *appComponentImpl) UserSessionStore() store.UserSessionStore {
 	return kvs.NewRedisStore(app.userSessionRedis)
+}
+
+func (app *appComponentImpl) BookmarkStore() store.BookmarkStore {
+	return tarouSQL.NewBookmarkStore(app.bookmarkDB)
+}
+
+func (app *appComponentImpl) EntryStore() store.EntryStore {
+	return tarouSQL.NewEntryStore(app.bookmarkDB)
 }

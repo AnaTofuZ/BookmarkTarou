@@ -12,8 +12,8 @@ services:
       - "8000:8000"
     environment:
       PORT: 8000
-      DATABASE_DSN: root:dondokodon@tcp(db:3306)/bookmark_tarou
-      DATABASE_DSN_TEST: root:dondokodon@tcp(db:3306)/bookmark_tarou_test
+      DATABASE_DSN: root:dondokodon@tcp(db:3306)/bookmark_tarou?parseTime=true
+      DATABASE_DSN_TEST: root:dondokodon@tcp(db:3306)/bookmark_tarou_test?parseTime=true
       REDIS_ADDR: redis:6379
     tty: true
     stdin_open: true

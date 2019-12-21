@@ -6,3 +6,9 @@ type Entry struct {
 	URL   string `db:"url"`
 	Title string `db:"titile"`
 }
+
+// Entryとブックマークされた回数を持ってくるモデル
+type EntryWithBCount struct {
+	Entry *Entry
+	Count uint64
+}
