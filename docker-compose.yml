@@ -7,20 +7,28 @@ services:
       - .:/src
     links:
       - db
+      - redis
     ports:
       - "8000:8000"
     environment:
       PORT: 8000
-      DATABASE_DSN: root@(db:3306)/bookmark_tarou
-      DATABASE_DSN_TEST: root@(db:3306)/bookmark_tarou_test
+      DATABASE_DSN: root:dondokodon@tcp(db:3306)/bookmark_tarou
+      DATABASE_DSN_TEST: root:dondokodon@tcp(db:3306)/bookmark_tarou_test
+      REDIS_ADDR: redis:6379
     tty: true
     stdin_open: true
   db:
     image: mysql:8.0
     volumes:
-      - ./db/docker:/docker-entrypoint-initdb.d
+      - ./db/mysql/docker:/docker-entrypoint-initdb.d
       - .:/app
     ports:
       - "3306:3306"
     environment:
-      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+      MYSQL_ROOT_PASSWORD: dondokodon
+  redis:
+    image: redis:latest
+    volumes:
+      - ./db/redis:/data"
+    ports:
+      - "6379:6379"
