@@ -44,8 +44,11 @@ func (e *entryStoreImpl) Create(ctx context.Context, url, title string) (*model.
 	}, nil
 }
 
-func (e *entryStoreImpl) BookmarkedCountFromEntryIDs(ctx context.Context, ids *[]uint64) (*[]uint64, error) {
-	panic("implement me")
+func (e *entryStoreImpl) BookmarkedCountFromEntryIDs(ctx context.Context, ids *[]uint64) (*[]model.EntryWithBCount, error) {
+	//ents, err := record.Entries(qm.Where("id=?",ids),qm.Load("bookmarks")).All(ctx,e.db)
+	//if err != nil {
+	//	return nil, fmt.Errorf("failed get entry... :%w",err)
+	//}
 }
 
 func (e *entryStoreImpl) FindEntryFromURL(ctx context.Context, url string) (*model.Entry, error) {
@@ -61,4 +64,39 @@ func (e *entryStoreImpl) FindEntryFromURL(ctx context.Context, url string) (*mod
 		URL:   string(et.URL),
 		Title: et.Titile,
 	}, nil
+}
+
+func (e *entryStoreImpl) List(ctx context.Context, offset, limit int) (*[]model.Entry, error) {
+	ets, err := record.Entries(qm.Offset(offset), qm.Limit(limit)).All(ctx, e.db)
+	if err != nil {
+		return nil, fmt.Errorf("failed get list entry: %w", err)
+	}
+	modelEntries := make([]model.Entry, 0, len(ets))
+	for _, et := range ets {
+		modelEntries = append(modelEntries, model.Entry{
+			ID:    et.ID,
+			Title: et.Titile,
+			URL:   string(et.URL),
+		})
+	}
+	return &modelEntries, nil
+}
+
+func (e *entryStoreImpl) ListWirhBCount(ctx context.Context, offset, limit int) (*[]model.EntryWithBCount, error) {
+	ets, err := record.Entries(qm.Offset(offset), qm.Limit(limit), qm.Load("Bookmarks")).All(ctx, e.db)
+	if err != nil {
+		return nil, fmt.Errorf("failed get list entry: %w", err)
+	}
+	modelEntriesWC := make([]model.EntryWithBCount, 0, len(ets))
+	for _, et := range ets {
+		modelEntriesWC = append(modelEntriesWC, model.EntryWithBCount{
+			Entry: &model.Entry{
+				ID:    et.ID,
+				Title: et.Titile,
+				URL:   string(et.URL),
+			},
+			Count: uint64(len(et.R.Bookmarks)),
+		})
+	}
+	return &modelEntriesWC, nil
 }

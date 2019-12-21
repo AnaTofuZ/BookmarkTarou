@@ -29,8 +29,13 @@ func run() int {
 	fmt.Println(app.UserStore())
 	e := echo.New()
 	e.Use(middleware.BodyDump(bodyDumpHandler))
-	webHandler := web.CreateHandlerImpl()
-	webHandler.Perform(e, app.UserStore(), app.UserSessionStore())
+	webHandler := web.CreateHandlerImpl(web.StoreInterfaces{
+		BookmarkStore:    app.BookmarkStore(),
+		EntryStore:       app.EntryStore(),
+		UserSessionStore: app.UserSessionStore(),
+		UserStore:        app.UserStore(),
+	})
+	webHandler.Perform(e)
 
 	if err := e.Start(":8000"); err != nil {
 		log.Fatal(err)
