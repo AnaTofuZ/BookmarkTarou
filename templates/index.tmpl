@@ -1,0 +1,10 @@
+{{define "title"}} ブックマーク太郎 {{end}}
+
+{{define "body"}}
+<h1> ブックマーク</h1>
+
+    {{if .User}}
+    {{else}}
+        <a href="/signup"> ユーザー登録 </a>
+    {{end}}
+{{end}}
