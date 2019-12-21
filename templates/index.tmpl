@@ -9,10 +9,11 @@
     </div>
 {{end}}
 
-<div id = "user_info">
+<div id="user_info">
     {{if .User}}
         <div id="user_name">
-           {{.User.Name}}太郎さんこんにちは
+           {{.User.Name}}太郎さんこんにちは <br>
+            <a href="/bookmark/add"> ブックマークしたい!! </a> <br>
             <a href="/logout">ログアウト!!</a>
         </div>
     {{else}}
@@ -20,4 +21,12 @@
         <a href="/signin">入場 </a>
     {{end}}
     </div>
+
+<div id="entry_lists">
+    {{if .Entries}}
+        {{range .Entries}}
+            <p>{{.Count}} Bookmark:: <a href="{{.Entry.URL}}"> {{.Entry.Title}}</a> </p>
+        {{end}}
+    {{end}}
+</div>
 {{end}}

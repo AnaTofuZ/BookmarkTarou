@@ -9,11 +9,21 @@ import (
 
 type BookmarkApp interface {
 	Create(ctx context.Context, uid uint64, url, comment string) (*model.Entry, error)
+	ListWithBCount(ctx context.Context) (*[]model.EntryWithBCount, error)
 }
 
 type BookmarkAppImpl struct {
 	entryStore    store.EntryStore
 	bookmarkStore store.BookmarkStore
+}
+
+func (b *BookmarkAppImpl) ListWithBCount(ctx context.Context) (*[]model.EntryWithBCount, error) {
+	ewbs, err := b.entryStore.ListWirhBCount(ctx, 0, 20)
+	if err != nil {
+		fmt.Println(err)
+		return nil, fmt.Errorf("failed ListWithBCount : %w", err)
+	}
+	return ewbs, nil
 }
 
 func NewBookmarkApp(entryStore store.EntryStore, bookmarkStore store.BookmarkStore) BookmarkApp {

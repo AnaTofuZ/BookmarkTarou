@@ -47,6 +47,7 @@ func (uh *HandlerImpl) Perform(e *echo.Echo) {
 	uh.templates["index.tmpl"] = template.Must(template.ParseFiles("templates/index.tmpl", "templates/main.tmpl"))
 	uh.templates["signup.tmpl"] = template.Must(template.ParseFiles("templates/signup.tmpl", "templates/main.tmpl"))
 	uh.templates["signin.tmpl"] = template.Must(template.ParseFiles("templates/signin.tmpl", "templates/main.tmpl"))
+	uh.templates["add_bookmark.tmpl"] = template.Must(template.ParseFiles("templates/add_bookmark.tmpl", "templates/main.tmpl"))
 	e.Renderer = uh
 	e.GET("/", uh.getRoot)
 	e.GET("/signup", uh.getSignup)
@@ -55,14 +56,19 @@ func (uh *HandlerImpl) Perform(e *echo.Echo) {
 
 	e.GET("/signin", uh.getSignin)
 	e.POST("/signin", uh.postSignin)
+
+	e.GET("/bookmark/add", uh.getbookmarkAdd)
+	e.POST("/bookmark/add", uh.postbookmarkAdd)
 }
 
 type renderVal map[string]interface{}
 
 func (u *HandlerImpl) getRoot(c echo.Context) error {
 	usr, _ := u.findUser(c)
+	lwbc, _ := u.BookmarkApp.ListWithBCount(c.Request().Context())
 	return c.Render(http.StatusOK, "index.tmpl", renderVal{
-		"User": usr,
+		"User":    usr,
+		"Entries": *lwbc,
 	})
 }
 
@@ -166,6 +172,52 @@ func (u *HandlerImpl) getLogout(c echo.Context) error {
 	}
 	uuID := sessionCookie.Value
 	u.session.Remove(uuID)
+	return c.Redirect(http.StatusSeeOther, "/")
+}
+
+func (h *HandlerImpl) getbookmarkAdd(c echo.Context) error {
+	usr, err := h.findUser(c)
+	if err != nil {
+		c.Redirect(http.StatusSeeOther, "/")
+		return c.Render(http.StatusOK, "/", renderVal{
+			"msg": "ログインしてからで!!",
+		})
+	}
+	if usr == nil {
+		c.Redirect(http.StatusSeeOther, "/")
+		return c.Render(http.StatusOK, "/", renderVal{
+			"msg": "ログインしてからで!!",
+		})
+	}
+	return c.Render(http.StatusOK, "add_bookmark.tmpl", nil)
+}
+
+func (h *HandlerImpl) postbookmarkAdd(c echo.Context) error {
+	usr, err := h.findUser(c)
+	if err != nil {
+		c.Redirect(http.StatusSeeOther, "/")
+		return c.Render(http.StatusOK, "/", renderVal{
+			"msg": "ログインしてからで!!",
+		})
+	}
+
+	params := new(struct {
+		URL     string `form:"url"`
+		Comment string `form:"comment"`
+	})
+
+	err = c.Bind(params)
+	if err != nil {
+		fmt.Println(err)
+		return fmt.Errorf("failed postBookmark: %w", err)
+	}
+
+	entry, err := h.BookmarkApp.Create(c.Request().Context(), usr.ID, params.URL, params.Comment)
+	if err != nil {
+		fmt.Println(err)
+		return fmt.Errorf("failed postBookmark: %w", err)
+	}
+	fmt.Println(entry)
 	return c.Redirect(http.StatusSeeOther, "/")
 }
 
