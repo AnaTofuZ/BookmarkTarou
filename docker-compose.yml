@@ -11,8 +11,8 @@ services:
       - "8000:8000"
     environment:
       PORT: 8000
-      DATABASE_DSN: root@(db:3306)/bookmark_tarou
-      DATABASE_DSN_TEST: root@(db:3306)/bookmark_tarou_test
+      DATABASE_DSN: root:dondokodon@tcp(db:3306)/bookmark_tarou
+      DATABASE_DSN_TEST: root:dondokodon@tcp(db:3306)/bookmark_tarou_test
     tty: true
     stdin_open: true
   db:
@@ -23,7 +23,7 @@ services:
     ports:
       - "3306:3306"
     environment:
-      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+      MYSQL_ROOT_PASSWORD: dondokodon
   redis:
     image: redis:latest
     volumes:

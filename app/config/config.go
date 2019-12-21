@@ -6,7 +6,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/anatofuz/BookmarkTarou/infra/store/mysql"
+	tarouSQL "github.com/anatofuz/BookmarkTarou/infra/store/mysql"
 
 	"github.com/anatofuz/BookmarkTarou/infra/store"
 	_ "github.com/go-sql-driver/mysql"
@@ -56,14 +56,19 @@ func CreateAppComponent() (AppComponent, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed create DiConfig : %w", err)
 	}
+	fmt.Println(config.dsn)
 	db, err := sql.Open("mysql", config.dsn)
 	if err != nil {
 		return nil, xerrors.Errorf("failed open sqlx : %w", err)
+	}
+	err = db.Ping()
+	if err != nil {
+		return nil, err
 	}
 
 	return &appComponentImpl{bookmarkDB: db}, nil
 }
 
 func (app *appComponentImpl) UserStore() store.UserStore {
-	return mysql.NewUserStore(app.bookmarkDB)
+	return tarouSQL.NewUserStore(app.bookmarkDB)
 }
