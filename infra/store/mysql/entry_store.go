@@ -49,6 +49,7 @@ func (e *entryStoreImpl) BookmarkedCountFromEntryIDs(ctx context.Context, ids *[
 	//if err != nil {
 	//	return nil, fmt.Errorf("failed get entry... :%w",err)
 	//}
+	return nil,nil
 }
 
 func (e *entryStoreImpl) FindEntryFromURL(ctx context.Context, url string) (*model.Entry, error) {
