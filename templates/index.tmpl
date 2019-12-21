@@ -25,7 +25,7 @@
 <div id="entry_lists">
     {{if .Entries}}
         {{range .Entries}}
-            <p>{{.Count}} Bookmark:: <a href="{{.Entry.URL}}"> {{.Entry.Title}}</a> </p>
+            <p>{{.Count}} Bookmark:: <a href="/entry/{{.Entry.ID}}"> {{.Entry.Title}}</a> </p>
         {{end}}
     {{end}}
 </div>

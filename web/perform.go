@@ -10,6 +10,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/anatofuz/BookmarkTarou/app"
 	"github.com/anatofuz/BookmarkTarou/infra/store"
@@ -48,6 +49,7 @@ func (uh *HandlerImpl) Perform(e *echo.Echo) {
 	uh.templates["signup.tmpl"] = template.Must(template.ParseFiles("templates/signup.tmpl", "templates/main.tmpl"))
 	uh.templates["signin.tmpl"] = template.Must(template.ParseFiles("templates/signin.tmpl", "templates/main.tmpl"))
 	uh.templates["add_bookmark.tmpl"] = template.Must(template.ParseFiles("templates/add_bookmark.tmpl", "templates/main.tmpl"))
+	uh.templates["bookmark_info.tmpl"] = template.Must(template.ParseFiles("templates/bookmark_info.tmpl", "templates/main.tmpl"))
 	e.Renderer = uh
 	e.GET("/", uh.getRoot)
 	e.GET("/signup", uh.getSignup)
@@ -59,6 +61,8 @@ func (uh *HandlerImpl) Perform(e *echo.Echo) {
 
 	e.GET("/bookmark/add", uh.getbookmarkAdd)
 	e.POST("/bookmark/add", uh.postbookmarkAdd)
+
+	e.GET("/entry/:id", uh.getEntryElem)
 }
 
 type renderVal map[string]interface{}
@@ -219,6 +223,44 @@ func (h *HandlerImpl) postbookmarkAdd(c echo.Context) error {
 	}
 	fmt.Println(entry)
 	return c.Redirect(http.StatusSeeOther, "/")
+}
+
+func (h *HandlerImpl) getEntryElem(c echo.Context) error {
+	entryID := c.Param("id")
+
+	eid, err := strconv.ParseUint(entryID, 10, 64)
+	if err != nil {
+		return c.Redirect(http.StatusSeeOther, "/")
+	}
+	etr, err := h.BookmarkApp.FindEntryFromID(c.Request().Context(), eid)
+	if err != nil {
+		fmt.Println(err)
+		return fmt.Errorf("failed postBookmark: %w", err)
+	}
+	blist, users, err := h.BookmarkApp.BlistFromEntryIDWUsers(c.Request().Context(), eid)
+	if err != nil {
+		fmt.Println(err)
+		return fmt.Errorf("failed getEntryElem: %w", err)
+	}
+
+	type userWBook struct {
+		User     *model.User
+		Bookmark *model.Bookmark
+	}
+
+	bwu := make([]userWBook, len(*blist))
+
+	for i, bookmark := range *blist {
+		bwu[i].Bookmark = &bookmark
+	}
+	for i, user := range *users {
+		bwu[i].User = &user
+	}
+
+	return c.Render(http.StatusOK, "bookmark_info.tmpl", renderVal{
+		"Entry": etr,
+		"BwU":   bwu,
+	})
 }
 
 func createUUID() string {

@@ -49,7 +49,7 @@ func (e *entryStoreImpl) BookmarkedCountFromEntryIDs(ctx context.Context, ids *[
 	//if err != nil {
 	//	return nil, fmt.Errorf("failed get entry... :%w",err)
 	//}
-	return nil,nil
+	return nil, nil
 }
 
 func (e *entryStoreImpl) FindEntryFromURL(ctx context.Context, url string) (*model.Entry, error) {
@@ -100,4 +100,17 @@ func (e *entryStoreImpl) ListWirhBCount(ctx context.Context, offset, limit int) 
 		})
 	}
 	return &modelEntriesWC, nil
+}
+
+func (e *entryStoreImpl) FindFromID(ctx context.Context, id uint64) (*model.Entry, error) {
+	etr, err := record.FindEntry(ctx, e.db, id)
+	if err != nil {
+		fmt.Println(err)
+		return nil, fmt.Errorf("failed FindFFromID: %w", err)
+	}
+	return &model.Entry{
+		ID:    etr.ID,
+		URL:   string(etr.URL),
+		Title: etr.Titile,
+	}, nil
 }

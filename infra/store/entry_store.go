@@ -6,6 +6,7 @@ import (
 )
 
 type EntryStore interface {
+	FindFromID(ctx context.Context, id uint64) (*model.Entry, error)
 	Create(ctx context.Context, url, title string) (*model.Entry, error)
 	List(ctx context.Context, offset, limit int) (*[]model.Entry, error)
 	ListWirhBCount(ctx context.Context, offset, limit int) (*[]model.EntryWithBCount, error)

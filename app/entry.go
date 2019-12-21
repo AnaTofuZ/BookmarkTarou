@@ -8,8 +8,11 @@ import (
 )
 
 type BookmarkApp interface {
+	FindEntryFromID(ctx context.Context, entryID uint64) (*model.Entry, error)
 	Create(ctx context.Context, uid uint64, url, comment string) (*model.Entry, error)
 	ListWithBCount(ctx context.Context) (*[]model.EntryWithBCount, error)
+	BlistFromEntryID(ctx context.Context, entryID uint64) (*[]model.Bookmark, error)
+	BlistFromEntryIDWUsers(ctx context.Context, entryID uint64) (*[]model.Bookmark, *[]model.User, error)
 }
 
 type BookmarkAppImpl struct {
@@ -48,6 +51,33 @@ func (b *BookmarkAppImpl) Create(ctx context.Context, uid uint64, url, comment s
 	_, err = b.bookmarkStore.Create(ctx, uid, etr.ID, comment)
 	if err != nil {
 		return nil, fmt.Errorf("failed Create Bookmark: %w at app.CreateBookmarkImpl", err)
+	}
+	return etr, nil
+}
+
+func (b *BookmarkAppImpl) BlistFromEntryID(ctx context.Context, entryID uint64) (*[]model.Bookmark, error) {
+	mbrs, err := b.bookmarkStore.ListFromEntryID(ctx, entryID)
+	if err != nil {
+		fmt.Print(err)
+		return nil, fmt.Errorf("failed: blistFrom... : %w", err)
+	}
+	return mbrs, nil
+}
+
+func (b *BookmarkAppImpl) BlistFromEntryIDWUsers(ctx context.Context, entryID uint64) (*[]model.Bookmark, *[]model.User, error) {
+	mbrs, users, err := b.bookmarkStore.ListFromEntryIDWUsers(ctx, entryID)
+	if err != nil {
+		fmt.Print(err)
+		return nil, nil, fmt.Errorf("failed: blistFrom... : %w", err)
+	}
+	return mbrs, users, nil
+}
+
+func (b *BookmarkAppImpl) FindEntryFromID(ctx context.Context, entryID uint64) (*model.Entry, error) {
+	etr, err := b.entryStore.FindFromID(ctx, entryID)
+	if err != nil {
+		fmt.Print(err)
+		return nil, fmt.Errorf("failed: blistFrom... : %w", err)
 	}
 	return etr, nil
 }
