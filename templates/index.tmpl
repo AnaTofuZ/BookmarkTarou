@@ -3,8 +3,13 @@
 {{define "body"}}
 <h1> ブックマーク</h1>
 
+    <div id = "user_info">
     {{if .User}}
+        <div id="user_name">
+           {{.User.Name}}太郎さんこんにちは
+        </div>
     {{else}}
         <a href="/signup"> ユーザー登録 </a>
     {{end}}
+    </div>
 {{end}}
