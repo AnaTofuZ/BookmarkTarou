@@ -4,8 +4,8 @@ import "errors"
 
 // User ユーザー情報
 type User struct {
-	ID   uint64
-	Name string
+	ID   uint64 `json:"ID"`
+	Name string `json:"Name"`
 }
 
 // UserWithPW パスワード付きのモデル
