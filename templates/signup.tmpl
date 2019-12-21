@@ -3,6 +3,11 @@
 {{define "body"}}
     <h1> 太郎登録 </h1>
 
+{{if .msg}}
+    <div id="error">
+        <p>{{.msg}}}</p>
+    </div>
+{{end}}
     <div id="signup_form">
         <form action="signup" method="post">
             <div> 名前 <input type="text" name="name">  </div>

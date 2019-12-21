@@ -5,13 +5,11 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/volatiletech/sqlboiler/queries/qm"
-	"unsafe"
-
 	"github.com/anatofuz/BookmarkTarou/infra/record"
 	"github.com/anatofuz/BookmarkTarou/infra/store"
 	"github.com/anatofuz/BookmarkTarou/model"
 	"github.com/volatiletech/sqlboiler/boil"
+	"github.com/volatiletech/sqlboiler/queries/qm"
 )
 
 type userStoreImpl struct {
@@ -40,7 +38,7 @@ func (u *userStoreImpl) GetUserFromID(ctx context.Context, uid uint64) (*model.U
 
 func (u *userStoreImpl) CreateUser(ctx context.Context, name string, password []byte) (*model.User, error) {
 	recordUser := &record.User{
-		Name:     *(*[]byte)(unsafe.Pointer(&name)),
+		Name:     []byte(name),
 		Password: password,
 	}
 	tx, err := u.db.BeginTx(ctx, nil)

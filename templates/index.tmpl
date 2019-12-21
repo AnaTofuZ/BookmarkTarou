@@ -7,9 +7,11 @@
     {{if .User}}
         <div id="user_name">
            {{.User.Name}}太郎さんこんにちは
+            <a href="/logout">ログアウト!!</a>
         </div>
     {{else}}
         <a href="/signup"> ユーザー登録 </a>
+        <a href="/signin">入場 </a>
     {{end}}
     </div>
 {{end}}
